@@ -11,6 +11,7 @@ GitFilesUploader
 |		|__ Move-ChangesToMaster.ps1  
 |		|__ New-GitRepo.ps1  
 |		|__ Test-GitRepo.ps1  
+|   |__ Update-Branch.ps1
 |__ Public  
 |	|  
 |	|__ ps1  
@@ -18,8 +19,9 @@ GitFilesUploader
 |		|__ Push-ChangesToRepo.ps1  
 |
 |__init.ps1
+|__README.md
 </pre>
 
-Import-Module GitFilesUploader.psm1
+Import-Module GitFilesUploader.psd1 -Verbose
 
 Push-ChangesToRepo -Path <PATH> -RepoURL <REPO_URL> -BranchName <BRANCH_NAME>
