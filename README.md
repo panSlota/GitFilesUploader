@@ -24,4 +24,5 @@ GitFilesUploader
 
 Import-Module GitFilesUploader.psd1 -Verbose
 
-Push-ChangesToRepo -Path <PATH> -RepoURL <REPO_URL> -BranchName <BRANCH_NAME>
+Push-ChangesToRepo -Path <PATH> -RepoURL <REPO_URL> -BranchName <BRANCH_NAME> -MainBranchName <MASTER> -DeleteSourceBranch $true/$false
+vychozi hodnota parametru DeleteSourceBranch je $false
