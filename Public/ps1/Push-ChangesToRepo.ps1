@@ -37,7 +37,7 @@ function Push-ChangesToRepo{
         [Parameter(Mandatory = $true)]
         [string]$MainBranchName,
 
-        [switch]$DeleteSourceBranch
+        [bool]$DeleteSourceBranch = $false
     )
     Set-Location -Path $Path
 
@@ -53,7 +53,7 @@ function Push-ChangesToRepo{
     
     Move-ChangesToMaster -BranchName $BranchName -MainBranchName $MainBranchName
 
-    if($DeleteSourceBranch.IsPresent){
+    if($DeleteSourceBranch){
         git checkout $MainBranchName
         git branch -D $BranchName
         git push
