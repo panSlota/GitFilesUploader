@@ -30,8 +30,8 @@ function Test-GitRepo{
 
     Set-Location -Path $Path
 
-    $GitFolderFoundMsg = "Složka .git byla nalezena na cestì: $gitFolderPath"
-    $GitFolderNotFounfErr = "Složka .git nebyla nalezena na zadané cestì ani v nadøazených složkách."
+    $GitFolderFoundMsg    = "---------------------------------------------------`n SLOŽKA .git BYLA NALEZENA NA CESTÌ: '{0}'.`n---------------------------------------------------"
+    $GitFolderNotFounfErr = "---------------------------------------------------`nSLOŽKA .git NEBYLA NALEZENA NA ZADANÉ CESTÌ ANI V NADØAZENÝCH SLOŽKÁCH.`n---------------------------------------------------"
 
     $currentPath = Resolve-Path $Path
     $gitToken = ".git"
@@ -40,11 +40,11 @@ function Test-GitRepo{
         $gitFolderPath = Join-Path $currentPath $gitToken
         
         if (Test-Path -Path $gitFolderPath -PathType Container) {
-            Write-Host $GitFolderFoundMsg -ForegroundColor Green
+            Write-Host ($GitFolderFoundMsg -f $gitFolderPath) -ForegroundColor Green
             return $gitFolderPath
         }
 
-        $parentPath = Get-Item $currentPath | Select-Object -ExpandProperty Parent
+        $parentPath = Split-Path $currentPath -Parent
         if ($parentPath -eq $null) {
             break
         }

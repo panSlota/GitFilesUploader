@@ -21,7 +21,6 @@ Push-ChangesToRepo -RepoURL "https://github.com/user/repo.git" -BranchName "main
 
 Tento pøíklad provede push všech zmìn do vìtve `main` v uvedeném repozitáøi.
 #>
-
 function Push-ChangesToRepo{
     
     [CmdletBinding()]
@@ -33,15 +32,34 @@ function Push-ChangesToRepo{
         [string]$RepoURL,
         
         [Parameter(Mandatory = $true)]
-        [string]$BranchName
+        [string]$BranchName,
+
+        [Parameter(Mandatory = $true)]
+        [string]$MainBranchName,
+
+        [switch]$DeleteSourceBranch
     )
     Set-Location -Path $Path
 
-    Get-GitRepo -Path $Path -RepoURL $RepoURL -BranchName $BranchName
+    $BranchRemovedMsg = "---------------------------------------------------`nVÌTEV '{0}' SMAZÁNA.`n---------------------------------------------------"
+    $ChangesPushedMsg = "---------------------------------------------------`nZMÌNY Z VÌTVE '{0}' NAHRÁNY.`n---------------------------------------------------"
+
+    Get-GitRepo -Path $Path -RepoURL $RepoURL -BranchName $BranchName -MainBranchName $MainBranchName
 
     git add .
     git commit -m "changes from $((Get-Date).ToString("yyyy-dd-MM HH:mm:ss"))"
-    git push origin $branchName
+    git push
 
-    Move-ChangesToMaster
+    
+    Move-ChangesToMaster -BranchName $BranchName -MainBranchName $MainBranchName
+
+    if($DeleteSourceBranch.IsPresent){
+        git checkout $MainBranchName
+        git branch -D $BranchName
+        git push
+        Write-Host ($BranchRemovedMsg -f $BranchName) -ForegroundColor Green
+    }
+
+    Write-Host ($ChangesPushedMsg -f $BranchName) -ForegroundColor Green
+    
 }
