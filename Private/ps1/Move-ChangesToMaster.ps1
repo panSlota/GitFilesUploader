@@ -23,18 +23,26 @@ function Move-ChangesToMaster{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string]$BranchName
+        [string]$BranchName,
+
+        [Parameter(Mandatory = $true)]
+        [string]$MainBranchName
     )
-
-
-    $mainBranch = git symbolic-ref refs/remotes/origin/HEAD 2>&1 | ForEach-Object {
-        $_ -replace 'refs/remotes/origin/', ''
-    }
 
     $currentTimestamp = [int][double]::Parse((Get-Date -UFormat %s))
 
-    git checkout $mainBranch
-    git pull origin $mainBranch
-    git merge --no-ff $BranchName -m "merged $BranchName to $mainBranch @$currentTimestamp"
-    git push origin $mainBranch
+    $ChangesMergedToMasterMsg = "---------------------------------------------------`nZMÌNY VE VÌTVI '{0}' NAHRÁNY DO VÌTVE '{1}'.`n---------------------------------------------------"
+    
+    git checkout $MainBranchName
+    git pull
+    $GitMergeOutput = git merge --no-ff $BranchName -m "merged $BranchName to $MainBranchName @ $((Get-Date).ToString('yyyy-dd-MM HH:mm:ss.fff'))" --allow-unrelated-histories
+    git push
+
+    Write-Host ($ChangesMergedToMasterMsg -f $BranchName, $MainBranchName) -ForegroundColor Green
+    
+    #formatovani mirne nefunguje
+    Write-Host "---------------------------------------------------" -ForegroundColor Yellow
+    Write-Host $GitMergeOutput -ForegroundColor Yellow
+    Write-Host "---------------------------------------------------" -ForegroundColor Yellow
+    
 }

@@ -32,21 +32,17 @@ function New-GitRepo{
         [string]$RepoURL,
 
         [Parameter(Mandatory = $true)]
-        [string]$BranchName
+        [string]$BranchName,
+
+        [Parameter(Mandatory = $true)]
+        [string]$MainBranchName
     )
 
     Set-Location -Path $Path
 
     git init
-    git remote add origin $RepoURL -Force
-    git fetch origin
+    git remote add origin $RepoURL
+    git pull --all
 
-    $Branches = git branch --list | ForEach-Object { $_.Trim() }
-    if($Branches -contains $BranchName -or $branches -contains "remotes/origin/$branchName"){
-        git checkout $BranchName
-    }
-    else{
-        git checkout -b $BranchName
-        git push -u origin $BranchName
-    }
+    Update-Branch -BranchName $BranchName -MainBranchName $MainBranchName
 }

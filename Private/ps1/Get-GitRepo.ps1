@@ -33,25 +33,36 @@ function Get-GitRepo{
         [string]$RepoURL,
 
         [Parameter(Mandatory = $true)]
-        [string]$BranchName
+        [string]$BranchName,
+
+        [Parameter(Mandatory = $true)]
+        [string]$MainBranchName
     )
 
     Set-Location -Path $Path
 
-    $PathNotValidErr = "Cesta k souborùm '$Path' je neplatná."
-    $RepoUrlNotValidErr = "URL k repozitáøi je neplatná nebo nedostupná."
+    $PathNotValidErr    = "---------------------------------------------------`nCESTA K SOUBORÙM '$Path' JE NEPLATNÁ.`n---------------------------------------------------"
+    $RepoUrlNotValidErr = "---------------------------------------------------`nURL K REPOZITÁØI JE NEPLATNÁ NEBO NEDOSTUPNÁ.`n---------------------------------------------------"
 
 
     if(-not (Test-Path -Path $Path)){
         Write-Error -Message $PathNotValidErr -ErrorAction Stop
     }
 
-    if((Invoke-WebRequest -Uri $RepoURL -UseBasicParsing -TimeoutSec 5).StatusCode -ne 200){
+    $statusCode = (Invoke-WebRequest -Uri $RepoURL -UseBasicParsing -TimeoutSec 5).StatusCode 
+    if($statusCode -ne 200 -and $statusCode -ne 203){
         Write-Error -Message $RepoUrlNotValidErr -ErrorAction Stop
     }
 
     $GitRepoPath = Test-GitRepo -Path $Path
-    if(-not (Test-Path -Path $GitRepoPath)){
-        New-GitRepo -Path $Path -RepoURL $RepoURL -BranchName $BranchName
+   
+    if($GitRepoPath -eq ''){
+        New-GitRepo -Path $Path -RepoURL $RepoURL -BranchName $BranchName -MainBranchName $MainBranchName
     }
+    elseif(-not (Test-Path -Path $GitRepoPath)){
+        New-GitRepo -Path $Path -RepoURL $RepoURL -BranchName $BranchName -MainBranchName $MainBranchName
+    }
+
+    Update-Branch -BranchName $BranchName -MainBranchName $MainBranchName
+    
 }
