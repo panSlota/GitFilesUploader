@@ -41,6 +41,8 @@ function Push-ChangesToRepo{
     )
     Set-Location -Path $Path
 
+    Set-Credentials
+
     $BranchRemovedMsg = "---------------------------------------------------`nVÌTEV '{0}' SMAZÁNA.`n---------------------------------------------------"
     $ChangesPushedMsg = "---------------------------------------------------`nZMÌNY Z VÌTVE '{0}' NAHRÁNY.`n---------------------------------------------------"
 
